@@ -74,11 +74,16 @@ tables(fqTrim)$top
 # TODO: compare this to the sRNA workbench results
 
 # in the next step run these analysis on all files
+####### Actual analysis
 
 files <- list.files()
 for(file in files) {
 	fq <- readFastq(".", pattern = file)
-	# do stuff with fq...
-	# then remove it
-	rm(fq)
+	fqClean <- removeAdapters(fq)
+	# store the cleaned files
+	fileClean <- paste("cl-", file, sep="")
+	writeFastq(fqClean, fileClean)
 }
+
+
+

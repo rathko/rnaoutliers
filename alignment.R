@@ -40,52 +40,36 @@ browseURL(rpt)
 mydict <- DNAStringSet(sapply(1:10, function(x) paste(sample(c("A","T","G","C"), 8, replace=T), collapse=""))) # Creates random sample sequences.
 names(mydict)<- paste("d", 1:10, sep="") # Names the sequences.
 
-# instead of random use the actual sequences
-# in addition make sure we remove the adapters before the alignment (see adapters.R)
-fq <- readFastq(".", pattern = "B470001.1.fq")
-sread(fq)
-
-mypdict <- PDict(mydict) # Creates a PDict dictionary. Allows only sequences of same length. 
+# see adapters.R for details on how to remove the adapters
+experimentSeqs <- RNAStringSet(sread(fqTrim))
+# filter the records down only to cel (C. Elegans)
+# how to loop through RNAStringSet
+for (seq in experimentSeqs) {
+    print(seq)
+    break
+}
 
 # get hairpin data
-seqs <- read.RNAStringSet(file=path.seqs, format="fasta")
-# match initial dictionary against every sequence from the hairpin (vmatchPDict is not implemented yet)
-for (seq in as.character(seqs)) {
-    mysearch <- matchPDict(mypdict, DNAString(RNAString(seq)), max.mismatch=0) # Searches all dictionary entries against chromosome. 
-    #print(length(unlist(mysearch)))
-    print(seq)
-    len <- length(unlist(mysearch))
+hairpinSeqs <- read.RNAStringSet(file=path.seqs, format="fasta")
+# filter down to only c. elegans
+
+
+# seq matching using vmatchPattern
+for (seq in as.character(experimentSeqs)) {
+    # get only > 18 long sequences
+    mindex <- vmatchPattern(seq, hairpinSeqs, max.mismatch=2)
+    len <- length(unlist(mindex))
     if (len > 0) {
-        #if (len > 5) len <- 5
-        print(unlist(mysearch)[1:len])
+        print(seq)
+        print(len)
+        #print(sum(countIndex(mindex)))
+        if (len > 5) len <- 5
+        print(unlist(mindex)[1:len])
+        # check the counters?
     }
     #break;
 }
 
-## (2) Accessing the Results
-unlist(mysearch)[1:10] # Returns first 10 matches.
-
-
-# alignment counters
-
-#path.mir <- "/Users/radek/reactor/phd/small_RNA/"
-path.mir <- "/Users/radek/download/"
-# cd ~/download; wget http://mirbase.org/pub/mirbase/CURRENT/hairpin.fa.gz; gzip -d ./hairpin.fa.gz
-path.seqs <- paste(path.mir,"hairpin.fa",sep="")
-#seqs <- read.DNAStringSet(file=path.seqs, format="fastq")
-seqs <- read.RNAStringSet(file=path.seqs, format="fasta")
-
-# what should be seed.match?
-seed.match <- "ACACUCC"
-seq.ids <- names(seqs)
-seq.lengths <- nchar(seqs)
-
-
-
-
-
-
-
-
+# store the c
 
 
