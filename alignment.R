@@ -14,36 +14,13 @@ library(Biostrings)
 
 library(Biostrings)
 
-####
+#setwd("/Users/radek/reactor/phd/small_RNA/clean")
+file <- "B470001.1.fq"
+fqClean <- readFastq(".", pattern = file)
 
-# assess quality of files
-
-#fastqDir <- file.path(data.dir, "fq")
-fastqDir <- data.dir
-fastqFiles <- dir(fastqDir, full=TRUE)
-
-qas0 <- Map(function(fl, nm) {
-        fq <- FastqSampler(fl)
-        qa(yield(fq), nm)
-}, fastqFiles, sub("_subset.fastq", "", basename(fastqFiles)))
-qas <- do.call(rbind, qas0)
-rpt <- report(qas, dest=tempfile())
-browseURL(rpt)
-
-#A report from a larger subset of the experiment is available
-#rpt <- system.file("GSM461176_81_qa_report", "index.html", package="useR2012")
-#browseURL(rpt)
-
-# alignemnt with positions
-# http://manuals.bioinformatics.ucr.edu/home/ht-seq
-
-mydict <- DNAStringSet(sapply(1:10, function(x) paste(sample(c("A","T","G","C"), 8, replace=T), collapse=""))) # Creates random sample sequences.
-names(mydict)<- paste("d", 1:10, sep="") # Names the sequences.
-
-# see adapters.R for details on how to remove the adapters
-experimentSeqs <- RNAStringSet(sread(fqTrim))
+experimentSeqs <- RNAStringSet(sread(fqClean))
 # filter the records down only to cel (C. Elegans)
-# how to loop through RNAStringSet
+# how to loop through RNAStringSet?
 for (seq in experimentSeqs) {
     print(seq)
     break
@@ -51,6 +28,8 @@ for (seq in experimentSeqs) {
 
 # get hairpin data
 hairpinSeqs <- read.RNAStringSet(file=path.seqs, format="fasta")
+hairpinNames <- names(hairpinSeqs)
+
 # filter down to only c. elegans
 
 
@@ -58,6 +37,7 @@ hairpinSeqs <- read.RNAStringSet(file=path.seqs, format="fasta")
 for (seq in as.character(experimentSeqs)) {
     # get only > 18 long sequences
     mindex <- vmatchPattern(seq, hairpinSeqs, max.mismatch=2)
+    # use vcountPattern instead - since we are interested inly in counts anyway
     len <- length(unlist(mindex))
     if (len > 0) {
         print(seq)
@@ -70,6 +50,9 @@ for (seq in as.character(experimentSeqs)) {
     #break;
 }
 
-# store the c
+# 1. ensure we count the records correctly
+# 2. 
+
+# store the counts
 
 
