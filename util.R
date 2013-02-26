@@ -21,9 +21,11 @@ removeAdapters <- function(fq) {
     adapterPad <- paste(substr(adapter,1,12), paste(rep("N", 25),collapse=""), sep="")
     maxMm <- round(seq_len(12)*0.2)
     maxMmPad <-  c(maxMm,rep(maxMm[length(maxMm)], 25))
+    sequences <- sread(fqClean)
+    quality <- quality(quality(fqClean))
     coordinates <- trimLRPatterns(Rpattern=adapterPad, subject=sequences, max.Rmismatch=maxMmPad, 
     		ranges=TRUE, with.Rindels=FALSE, Rfixed=FALSE)
-    seqTrim <- DNAStringSet(sequences, start=start(coordinates), end=end(coordinates))
+    seqTrim <- DNAStringSet(as.character(sequences), start=start(coordinates), end=end(coordinates))
     qualTrim <- BStringSet(quality, start=start(coordinates), end=end(coordinates))
 
     qualTrim <- FastqQuality(qualTrim)

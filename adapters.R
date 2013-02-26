@@ -11,9 +11,7 @@ for(file in files) {
 	fq <- readFastq(".", pattern = file)
 	fqClean <- removeAdapters(fq)
 	# store the cleaned files
-	fileClean <- paste("clean/", file, sep="")
+	fileClean <- paste("output/", file, sep="")
 	writeFastq(fqClean, fileClean)
 }
-
-
 
