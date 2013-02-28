@@ -27,3 +27,12 @@ for (key in 1:length(experimentSeqs)) {
 }
 
 # how to speed up the above?
+
+
+top = tables(sread(fq), n = length(length(unique(sread(fq))
+t$top[1:10]
+# add a occurences parameter, 2 by default
+# normalize table counts using PreprocessCore library (see normalize.quantiles)
+# see sum(t$top > 1) or t$top[t$top > 1]
+
+
