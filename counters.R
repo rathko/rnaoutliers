@@ -3,36 +3,43 @@
 # count the patterns per experiment
 
 # get hairpin data
+library(Biostrings)
+require(ShortRead)
+
 hairpin.path = "D:/devel/data/hairpin.fa"
 hairpinSeqs <- readRNAStringSet(file=hairpin.path, format="fasta")
 
 cElegHairpings <- hairpinSeqs[grep("^cel-", names(hairpinSeqs))] 
 
-#setwd("C:/devel/data/small_RNA")
-file <- "B470001.1.fq"
-fq <- readFastq("./output/", pattern = file)
-experimentSeqs <- RNAStringSet(sread(fq))
+#setwd("D:/devel/data/small_RNA")
+#file <- "B470002.1.fq"
 
-
-#pdict <- PDict(DNAStringSet(experimentSeqs))
-vcount <- rep(0, length(experimentSeqs))
-names(vcount) <- as.character(experimentSeqs)
-for (key in 1:length(experimentSeqs)) {
-#for (key in 1:100) {
-    #print(key)
-    seq <- names(vcount)[key]
-    #print(seq)
-    vcount[key] <- sum(vcountPattern(seq, cElegHairpings, max.mismatch=2))
-    print(vcount[key])
+getCounts <- function(file, occurences) {
+    fq <- readFastq("./rna_no_adapters/", pattern = file)
+    top = tables(sread(fq), n = length(unique(sread(fq))))
+    # get only the sequences with at least this number of occurences
+    experimentSeqs = top$top[top$top >= occurences]
+    vcount <- rep(0, length(experimentSeqs))
+    names(vcount) <- names(experimentSeqs)
+    for (key in 1:length(experimentSeqs)) {
+        seq <- names(vcount)[key]
+        vcount[key] <- sum(vcountPattern(RNAString(DNAString(seq)), cElegHairpings, max.mismatch=2))
+        if (key %% 1000 == 0) {
+            print(key)
+            flush.console()
+        }
+    }
+    vcount
 }
 
-# how to speed up the above?
+files <- list.files()
+for(file in files) {
+    vcount <- getCounts(file, occurences = 5)
+    # store the counters
+    dput(vcount[vcount > 0], paste("counters/", file, sep=""))
+}
 
 
-top = tables(sread(fq), n = length(length(unique(sread(fq))
-t$top[1:10]
-# add a occurences parameter, 2 by default
 # normalize table counts using PreprocessCore library (see normalize.quantiles)
-# see sum(t$top > 1) or t$top[t$top > 1]
 
 
