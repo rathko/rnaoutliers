@@ -4,10 +4,25 @@ rnaoutliers
 rnaoutliers
 
 Roadmap:
-- counting: 2013-02-16
-- counting + normalization and statistics: 2013-02-23 - send everything to Gene for tests
-- alignment for visualisations: 2013-03-02
-- sequence logos for edited miRNA (see seqLogo from Bioconductor): 2013-03-09 - send both of these to Gene
+x counting + normalization and statistics
+- only takes the RNA that has at least 5 mean-occurences (mean of the occurences) across all 3 samples within a given condition
+- do the t-test comparisons between
+N2C vs N2A
+       N2B
+       N2D
+       N2AN
+DC vs DA
+      DB
+      DD
+      DAD
+- t-test should compare 3 sample from each condition against 3 samples from other condition
+  (so essentially it will compare 3 numbers against 3 other numbers)
+- show the most significant RNAs (with lowest p-values) across all conditions
+
+
+
+- do the alignment for visualisations
+- sequence logos for edited miRNA (see seqLogo from Bioconductor)
 
 
 Between 2013-03-13 and 2013-04-01 - package this code, make simple documentation, help with writing a one page report

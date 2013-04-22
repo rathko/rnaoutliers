@@ -3,15 +3,23 @@
 
 #setwd("C:/devel/data/small_RNA")
 #setwd("/Users/radek/reactor/phd/small_RNA")
-require(ShortRead)
+folder.project <- "/Users/radek/reactor/rnaoutliers/"
+folder.raw <- "/Users/radek/reactor/phd/small_RNA/"
 
-files <- list.files()
+require(ShortRead)
+source(paste(folder.project, "util.R", sep=""))
+
+
+# just for testing
+files <- c("B470004.1.fq", "B470005.1.fq", "B470006.1.fq")
+
+files <- list.files(folder.raw)
 for(file in files) {
     print(paste("Reading file: ", file))
-	fq <- readFastq(".", pattern = file)
+	fq <- readFastq(folder.raw, pattern = file)
 	fqClean <- removeAdapters(fq)
 	# store the cleaned files
-	fileClean <- paste("output/", file, sep="")
+	fileClean <- paste(folder.raw, "clean/", file, sep="")
 	writeFastq(fqClean, fileClean)
 }
 
